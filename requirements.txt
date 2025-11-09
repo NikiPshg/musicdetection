@@ -1,0 +1,8 @@
+transformers
+safetensors
+torch
+torchaudio
+numpy
+huggingface-hub
+tqdm
+numpy
