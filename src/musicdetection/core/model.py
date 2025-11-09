@@ -114,9 +114,6 @@ class WavLMForMusicDetection(nn.Module):
             with torch.no_grad():
                 probs = self.forward(input_values=input_values, attention_mask=attention_mask).squeeze(-1)
             all_probs.append(probs)
-            print(probs)
-            print(batch['file_paths'])
-            print("--------------------------------")
 
         return torch.cat(all_probs, dim=0)
     
