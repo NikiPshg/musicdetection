@@ -3,7 +3,6 @@ import torch.multiprocessing as mp
 from transformers import AutoFeatureExtractor
 from safetensors import safe_open
 import numpy as np
-import os
 
 from src.musicdetection.audio_cache import create_audio_length_cache
 from src.musicdetection.dataset import MusicDetectionDataset, AudioCollate

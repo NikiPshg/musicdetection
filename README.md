@@ -81,7 +81,7 @@ model.eval()
 
 # Run inference
 predictions = model.predict_proba(dataloader)
-print(predictions)  # Tensor of probabilities [0, 1] for each audio file
+print(predictions)  # Tensor of probabilities [path1, path2], [0, 1] for each audio file
 ```
 
 ### Multi-GPU Inference

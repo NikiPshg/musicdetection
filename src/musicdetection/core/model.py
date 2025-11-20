@@ -4,7 +4,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from transformers import AutoModel, AutoConfig
 from torch.utils.data import DataLoader
-from typing import List
+from typing import List, Tuple
 from tqdm import tqdm
 from huggingface_hub import hf_hub_download
 
@@ -90,7 +90,7 @@ class WavLMForMusicDetection(nn.Module):
         return probs
 
     @torch.inference_mode()
-    def predict_proba(self, dataloader: DataLoader) -> torch.Tensor:
+    def predict_proba(self, dataloader: DataLoader) -> Tuple[torch.Tensor, List[str]]:
         """
         Predicts music probability for all data in the dataloader.
         Args:
@@ -101,6 +101,7 @@ class WavLMForMusicDetection(nn.Module):
         self.eval()
         
         all_probs = []
+        all_paths = []
 
         for batch in tqdm(dataloader, desc="Predicting"):
             if not batch: # Skip empty batches
@@ -110,12 +111,15 @@ class WavLMForMusicDetection(nn.Module):
             # DataParallel will handle splitting it across GPUs
             input_values = batch["input_values"].to(self.device)
             attention_mask = batch["attention_mask"].to(self.device)
+            all_path = batch['file_paths']
 
             with torch.no_grad():
                 probs = self.forward(input_values=input_values, attention_mask=attention_mask).squeeze(-1)
-            all_probs.append(probs)
 
-        return torch.cat(all_probs, dim=0)
+            all_probs.append(probs)
+            all_paths.extend(all_path)
+
+        return torch.cat(all_probs, dim=0), all_paths
     
     def _load_from_hf(self):
         return hf_hub_download(
